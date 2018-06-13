@@ -1,23 +1,19 @@
 let canvas = document.getElementById('canv');
 
-const COUNT_OF_NUMBERS = 21;
-const INTERVAL_LENGTH = 40;
-const INTERVAL_MARK_HEIGHT = 10;
-const SPACE_BETWEEN_INTERVAL_AND_NUMBER = 30;
 const X_START = 100;
 const Y_START = canvas.height / 2;
 const Y_CONTROL = Y_START / 1.5;
 const ARROW_LENGTH = 20;
+const LINE_LEVEL_Y = Y_START + 20;
 
 let c = canvas.getContext('2d');
 let firstNumber = document.getElementById('firstNumber');
 let secondNumber = document.getElementById('secondNumber');
-let coordinates = [];
+let coordinates = { 0: 135, 7: 410, 11: 565 };
 
 
 c.font = "28px Georgia";
 drawNumberLine();
-drawPointerLine(coordinates[0], coordinates[7], X_START + (coordinates[7] - coordinates[0]) / 2);
 
 
 let firstInput = document.getElementById('firstInput');
@@ -66,47 +62,20 @@ function createSpanWithNumber(number) {
 }
 
 function drawNumberLine() {
-    let currentX = X_START;
-
-    for(let i = 0; i < COUNT_OF_NUMBERS; i++) {
-        drawIntervalLine(currentX, Y_START + INTERVAL_MARK_HEIGHT, currentX, Y_START - INTERVAL_MARK_HEIGHT, i);
-        coordinates[i] = currentX;
-        currentX += INTERVAL_LENGTH;
-        drawLine(X_START, Y_START, currentX, Y_START, i);
+    let img = new Image();
+    img.src = 'sprite.png';
+    img.onload = () => {
+        c.drawImage(img, X_START, Y_START);
+        drawPointerLine(coordinates[0], coordinates[7], coordinates[0] + (coordinates[7] - coordinates[0]) / 2);
     }
-
-}
-
-function drawLine(fromX, fromY, toX, toY, currentNumber) {
-    c.beginPath();
-    c.moveTo(fromX, fromY);
-    c.lineTo(toX, toY);
-    if(currentNumber === COUNT_OF_NUMBERS - 1) {
-        drawArrow(fromX, toX, fromY, toY);
-    }
-    c.stroke();
-}
-
-function drawIntervalLine(fromX, fromY, toX, toY, currentNumber) {
-    c.beginPath();
-    if(currentNumber % 5 === 0) {
-        c.font = 'bold 28px Georgia';
-        c.lineWidth = 5;
-    }
-    c.fillText(currentNumber, fromX - 7, fromY + SPACE_BETWEEN_INTERVAL_AND_NUMBER); // fromX-7 - так как число не точно под линией интервала
-    c.moveTo(fromX, fromY);
-    c.lineTo(toX, toY);
-    c.stroke();
-    c.font = 'normal 28px Georgia';
-    c.lineWidth = 1;
 }
 
 function drawPointerLine(fromX, toX, cpX) {
     c.strokeStyle = 'purple';
     c.beginPath();
-    c.moveTo(fromX, Y_START);
-    c.quadraticCurveTo(cpX, Y_CONTROL, toX, Y_START);
-    drawArrow(fromX, toX, Y_CONTROL, Y_START);
+    c.moveTo(fromX, LINE_LEVEL_Y);
+    c.quadraticCurveTo(cpX, Y_CONTROL, toX, LINE_LEVEL_Y);
+    drawArrow(fromX, toX, Y_CONTROL, LINE_LEVEL_Y);
     c.stroke();
     c.strokeStyle = 'black';
 }
